@@ -5,58 +5,55 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install tools
+      - name: Install k3d and tools
         run: |
-          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-          sudo apt-get update && sudo apt-get install -y kubectl
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.6.0 bash
+          echo "::add-path::/home/runner/bin"  # Добавляем путь к k3d
+          k3d version
           
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          sudo apt-get update && sudo apt-get install -y kubectl
+          curl -sSfL https://get.helm.sh/helm-v3.18.3-linux-amd64.tar.gz | tar xz
+          sudo mv linux-amd64/helm /usr/local/bin/helm
           helm version
 
-      - name: Start k3d cluster
+      - name: Create k3d cluster
         run: |
           k3d cluster create ci \
             --port "8080:30080@loadbalancer" \
             --wait
-
+          
           mkdir -p ~/.kube
           k3d kubeconfig get ci > ~/.kube/config
           kubectl cluster-info
 
   deploy:
-    needs: test
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Helm
+      - name: Configure access
         run: |
-          # Установка Helm (если не установлен)
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          
           mkdir -p ~/.kube
           k3d kubeconfig get ci > ~/.kube/config
+          kubectl get nodes
 
-      - name: Deploy application
+      - name: Deploy with Helm
         run: |
-          cd helm-chart || { echo "Directory helm-chart not found"; exit 1; }
-          
+          cd helm-chart || exit 1
           helm upgrade --install app . \
-            --namespace default \
-            --create-namespace \
             --set image.tag=$GITHUB_SHA \
             --atomic \
             --timeout 5m
           
           kubectl wait --for=condition=available deployment/app --timeout=120s
 
-      - name: Verify deployment
+      - name: Verify
         run: |
-          kubectl get pods -o wide
-          kubectl get svc
+          kubectl get pods,svc
           helm list
