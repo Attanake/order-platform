@@ -10,32 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install k3d
+      - name: Install tools
         run: |
           curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-          echo "$HOME/.k3d/bin" >> $GITHUB_PATH
-          k3d version
-
-      - name: Install kubectl
-        run: |
           sudo apt-get update
           sudo apt-get install -y kubectl
-          kubectl version --client
-
-      - name: Install Helm
-        run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
-          ./get_helm.sh --version v3.18.3
-          helm version
+          ./get_helm.sh
+          echo "$HOME/.k3d/bin" >> $GITHUB_PATH
 
       - name: Create cluster
         run: |
           k3d cluster create ci \
             --port "8080:30080@loadbalancer" \
             --wait
-          mkdir -p ~/.kube
-          k3d kubeconfig get ci > ~/.kube/config
+          k3d kubeconfig get ci > $HOME/.kube/config
           kubectl cluster-info
 
   deploy:
@@ -46,8 +36,8 @@ jobs:
 
       - name: Configure access
         run: |
-          mkdir -p ~/.kube
-          k3d kubeconfig get ci > ~/.kube/config
+          mkdir -p $HOME/.kube
+          k3d kubeconfig get ci > $HOME/.kube/config
           kubectl get nodes
 
       - name: Deploy with Helm
@@ -56,7 +46,6 @@ jobs:
           helm upgrade --install app . \
             --namespace default \
             --create-namespace \
-            --set image.tag=$GITHUB_SHA \
             --atomic \
             --timeout 5m
           kubectl wait --for=condition=available deployment/app --timeout=120s
