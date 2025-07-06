@@ -1,0 +1,61 @@
+name: Full Pipeline
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install k3d
+        uses: k3d-io/k3d-action@v1
+        with:
+          k3d-version: v5.6.0
+
+      - name: Install kubectl
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y kubectl
+          kubectl version --client
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.18.3
+
+      - name: Create cluster
+        run: |
+          k3d cluster create ci \
+            --port "8080:30080@loadbalancer" \
+            --wait
+          
+          mkdir -p ~/.kube
+          k3d kubeconfig get ci > ~/.kube/config
+          kubectl cluster-info
+
+  deploy:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure access
+        run: |
+          mkdir -p ~/.kube
+          k3d kubeconfig get ci > ~/.kube/config
+          kubectl get nodes
+
+      - name: Deploy with Helm
+        run: |
+          cd helm-chart || exit 1
+          helm upgrade --install app . \
+            --namespace default \
+            --create-namespace \
+            --set image.tag=$GITHUB_SHA \
+            --atomic \
+            --timeout 5m
+          
+          kub
