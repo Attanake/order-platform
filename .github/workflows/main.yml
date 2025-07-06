@@ -31,12 +31,15 @@ jobs:
       - name: Deploy with Helm
         run: |
           cd helm-chart
+          helm dependency update .  # Обновляем зависимости, если есть
+          helm lint .              # Проверяем чарт
           helm upgrade --install app . \
-            --namespace default \
-            --create-namespace \
-            --atomic \
-            --timeout 5m
-          kubectl wait --for=condition=available deployment/app --timeout=120s
+          --namespace default \
+          --create-namespace \
+          --atomic \
+          --timeout 10m \
+          --debug
+          kubectl wait --for=condition=available deployment/app --timeout=300s
 
       - name: Verify deployment
         run: |
