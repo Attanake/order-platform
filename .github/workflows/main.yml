@@ -11,9 +11,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install k3d
-        uses: k3d-io/k3d-action@v1
-        with:
-          k3d-version: v5.6.0
+        run: |
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+          echo "$HOME/.k3d/bin" >> $GITHUB_PATH
+          k3d version
 
       - name: Install kubectl
         run: |
@@ -22,16 +23,17 @@ jobs:
           kubectl version --client
 
       - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.18.3
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh --version v3.18.3
+          helm version
 
       - name: Create cluster
         run: |
           k3d cluster create ci \
             --port "8080:30080@loadbalancer" \
             --wait
-          
           mkdir -p ~/.kube
           k3d kubeconfig get ci > ~/.kube/config
           kubectl cluster-info
@@ -50,12 +52,16 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          cd helm-chart || exit 1
+          cd helm-chart
           helm upgrade --install app . \
             --namespace default \
             --create-namespace \
             --set image.tag=$GITHUB_SHA \
             --atomic \
             --timeout 5m
-          
-          kub
+          kubectl wait --for=condition=available deployment/app --timeout=120s
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods,svc -A
+          helm list -A
