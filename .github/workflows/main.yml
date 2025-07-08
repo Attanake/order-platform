@@ -37,7 +37,7 @@ jobs:
           --namespace default \
           --create-namespace \
           --atomic \
-          --timeout 10m \
+          --timeout 30m \
           --debug
           kubectl wait --for=condition=available deployment/app --timeout=300s
 
