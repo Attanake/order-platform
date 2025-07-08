@@ -14,7 +14,7 @@ jobs:
         run: |
           curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
           sudo apt-get update
-          sudo apt-get install -y kubectl docker.io
+          sudo apt-get install -y kubectl
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
@@ -30,21 +30,15 @@ jobs:
 
       - name: Build and import Docker image
         run: |
-          docker build -t api-gateway \api-gateway            
-          docker build -t auth-service \auth-service
-          docker build -t inventory-service \inventory-ervice
-          docker build -t notification-service \notification-service
-          docker build -t order-service \order-service
-          docker build -t product-service \product-service
-          docker build -t user-service \user-service
-          
-          k3d image import api-gateway:latest -c ci
-          k3d image import auth-service:latest -c ci
-          k3d image import inventory-service:latest -c ci
-          k3d image import notification-service:latest -c ci
-          k3d image import order-service:latest -c ci
-          k3d image import product-service:latest -c ci
-          k3d image import user-service:latest -c ci
+          k3d image build -t api-gateway .\api-gateway            
+          k3d image build -t auth-service .\auth-service
+          k3d image build -t inventory-service .\inventory-ervice
+          k3d image build -t notification-service .\notification-service
+          k3d image build -t order-service .\order-service
+          k3d image build -t product-service .\product-service
+          k3d image build -t user-service .\user-service
+
+          k3d image list
 
       - name: Deploy with Helm
         run: |
