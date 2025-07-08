@@ -12,7 +12,7 @@ jobs:
 
       - name: Install tools
         run: |
-          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.6.0 bash
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.8.3 bash
           k3d --version
           sudo apt-get update
           sudo apt-get install -y kubectl
