@@ -1,11 +1,11 @@
-name: Full Pipeline
+name: Simple Pipeline
 
 on:
   push:
     branches: [ master ]
 
 jobs:
-  setup:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,10 +18,8 @@ jobs:
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
-          echo "$HOME/.k3d/bin" >> $GITHUB_PATH
-          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-      - name: Create cluster and export config
+      - name: Create cluster
         run: |
           k3d cluster create ci \
             --port "8080:30080@loadbalancer" \
@@ -30,44 +28,18 @@ jobs:
           k3d kubeconfig get ci > $HOME/.kube/config
           kubectl cluster-info
 
-      - name: Upload kubeconfig
-        uses: actions/upload-artifact@v3
-        with:
-          name: kubeconfig
-          path: $HOME/.kube/config
-
-  deploy:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download kubeconfig
-        uses: actions/download-artifact@v3
-        with:
-          name: kubeconfig
-
-      - name: Install tools
-        run: |
-          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-          sudo apt-get update
-          sudo apt-get install -y kubectl
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-          echo "$HOME/.k3d/bin" >> $GITHUB_PATH
-          mkdir -p $HOME/.kube
-          mv kubeconfig $HOME/.kube/config
-
       - name: Deploy with Helm
         run: |
           cd helm-chart
+          helm dependency update .  # Обновляем зависимости, если есть
+          helm lint .              # Проверяем чарт
           helm upgrade --install app . \
-            --namespace default \
-            --create-namespace \
-            --atomic \
-            --timeout 5m
-          kubectl wait --for=condition=available deployment/app --timeout=120s
+          --namespace default \
+          --create-namespace \
+          --atomic \
+          --timeout 30m \
+          --debug
+          kubectl wait --for=condition=available deployment/app --timeout=300s
 
       - name: Verify deployment
         run: |
