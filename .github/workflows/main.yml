@@ -31,6 +31,28 @@ jobs:
 
       - name: Build and import Docker image
         run: |
+          cd api-gateway
+          mvn clean package -DskipTests
+          cd ..
+          cd auth-service
+          mvn clean package -DskipTests
+          cd ..
+          cd inventory-service
+          mvn clean package -DskipTests
+          cd ..
+          cd notification-service
+          mvn clean package -DskipTests
+          cd ..
+          cd order-service
+          mvn clean package -DskipTests
+          cd ..
+          cd product-service
+          mvn clean package -DskipTests
+          cd ..
+          cd user-service
+          mvn clean package -DskipTests
+          cd ..
+          
           curl -fsSL https://get.docker.com -o get-docker.sh
           sudo sh get-docker.sh
           sudo usermod -aG docker $USER
@@ -41,6 +63,7 @@ jobs:
           docker build -t order-service ./order-service
           docker build -t product-service ./product-service
           docker build -t user-service ./user-service
+          
           k3d image import api-gateway -c ci
           k3d image import auth-service -c ci
           k3d image import inventory-service -c ci
