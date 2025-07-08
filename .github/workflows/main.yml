@@ -31,15 +31,24 @@ jobs:
 
       - name: Build and import Docker image
         run: |
-          k3d image build -t api-gateway .\api-gateway            
-          k3d image build -t auth-service .\auth-service
-          k3d image build -t inventory-service .\inventory-ervice
-          k3d image build -t notification-service .\notification-service
-          k3d image build -t order-service .\order-service
-          k3d image build -t product-service .\product-service
-          k3d image build -t user-service .\user-service
-
-          k3d image list
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          sudo usermod -aG docker $USER
+          docker build -t api-gateway ./api-gateway
+          docker build -t auth-service ./auth-service
+          docker build -t inventory-service ./inventory-service
+          docker build -t notification-service ./notification-service
+          docker build -t order-service ./order-service
+          docker build -t product-service ./product-service
+          docker build -t user-service ./user-service
+          k3d image import api-gateway -c ci
+          k3d image import auth-service -c ci
+          k3d image import inventory-service -c ci
+          k3d image import notification-service -c ci
+          k3d image import order-service -c ci
+          k3d image import product-service -c ci
+          k3d image import user-service -c ci
+          k3d image list -c ci
 
       - name: Deploy with Helm
         run: |
