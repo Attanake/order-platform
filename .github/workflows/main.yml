@@ -61,6 +61,10 @@ jobs:
           cd user-service
           mvn clean package -DskipTests
           cd ..
+
+          cd target
+          ls
+          cd ..
           
           curl -fsSL https://get.docker.com -o get-docker.sh
           sudo sh get-docker.sh
@@ -73,13 +77,13 @@ jobs:
           docker build -t product-service ./product-service
           docker build -t user-service ./user-service
           
-          k3d image import api-gateway -c ci
-          k3d image import auth-service -c ci
-          k3d image import inventory-service -c ci
-          k3d image import notification-service -c ci
-          k3d image import order-service -c ci
-          k3d image import product-service -c ci
-          k3d image import user-service -c ci
+          k3d image import -c ci api-gateway
+          k3d image import -c ci auth-service 
+          k3d image import -c ci inventory-service
+          k3d image import -c ci notification-service
+          k3d image import -c ci order-service
+          k3d image import -c ci product-service
+          k3d image import -c ci user-service
           k3d image list -c ci
 
       - name: Deploy with Helm
