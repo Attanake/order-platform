@@ -80,7 +80,7 @@ jobs:
           k3d image import -c ci order-service
           k3d image import -c ci product-service
           k3d image import -c ci user-service
-          k3d image list -c ci
+          k3d image list 
 
       - name: Deploy with Helm
         run: |
