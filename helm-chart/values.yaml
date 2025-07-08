@@ -1,4 +1,4 @@
-replicaCount: 3
+replicaCount: 1
 image:
   tag: latest
   pullPolicy: IfNotPresent
@@ -9,8 +9,8 @@ ingress:
 
 resources:
   limits:
-    cpu: "1000m"
-    memory: "1Gi"
+    cpu: "200m"
+    memory: "500Mi"
   requests:
     cpu: "200m"
     memory: "256Mi"
