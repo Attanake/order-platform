@@ -23,9 +23,8 @@ jobs:
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
-          sudo usermod -aG docker $USER
-          newgrp docker
-
+          sudo chmod 666 /var/run/docker.sock
+          
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -39,8 +38,7 @@ jobs:
           --port "8080:30080@loadbalancer" \
           --wait \
           --agents 1 \
-          --k3s-node-label "memory=4GB@agent:0" \
-          --k3s-node-label "cpu=2@agent:0"
+          --k3s-arg '--kubelet-arg=eviction-hard=imagefs.available<1%,nodefs.available<1%@agent:*'
           mkdir -p $HOME/.kube
           k3d kubeconfig get ci > $HOME/.kube/config
           kubectl cluster-info
@@ -61,7 +59,7 @@ jobs:
           for service in "${services[@]}"; do
             echo "Building Docker image for $service..."
             docker build -t $service ./$service
-            k3d image import $service:latest -c ci
+            k3d image import $service -c ci 
           done
           kubectl get nodes
           kubectl get svc
@@ -69,12 +67,14 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          kubectl get pods -A
-          kubectl describe pods -n default
-          kubectl get events -A --sort-by=.metadata.creationTimestamp
+          kubectl get pods -A -w &
+          kubectl describe pods -n default || true
+          kubectl get events -A --sort-by=.metadata.creationTimestamp || true
+          
           cd helm-chart
           helm dependency update
           helm lint .
+          
           helm upgrade --install app . \
             --namespace default \
             --create-namespace \
@@ -82,11 +82,16 @@ jobs:
             --timeout 30m \
             --wait \
             --wait-for-jobs \
-            --debug
+            --debug \
+            --set global.imagePullPolicy=Always \
+            --set api-gateway.readinessProbe.initialDelaySeconds=30 \
+            --set api-gateway.livenessProbe.initialDelaySeconds=45
+          
           kubectl wait --for=condition=available deployment/api-gateway-deployment --timeout=600s -n default
 
       - name: Verify deployment
         run: |
           kubectl get pods,svc,deploy -n default -o wide
-          helm status app -n default
-          kubectl logs -n default -l app=api-gateway --tail=100
+          helm status app -n defaul
+          kubectl logs -n default -l app=api-gateway --all-containers=true --tail=100
+          curl -v http://api-gateway.local:30080/health || true
