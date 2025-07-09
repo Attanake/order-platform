@@ -1,27 +1,77 @@
 replicaCount: 1
+
 image:
   tag: latest
   pullPolicy: IfNotPresent
-  version: latest
+
+global:
+  probes:
+    readiness:
+      path: /actuator/health
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      path: /actuator/health
+      initialDelaySeconds: 45
+      periodSeconds: 15
+      failureThreshold: 3
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+api-gateway:
+  image:
+    repository: api-gateway
+  service:
+    port: 8080
+
+auth-service:
+  image:
+    repository: auth-service
+  service:
+    port: 8080
+
+inventory-service:
+  image:
+    repository: inventory-service
+  service:
+    port: 8080
+
+notification-service:
+  image:
+    repository: notification-service
+  service:
+    port: 8080
+
+order-service:
+  image:
+    repository: order-service
+  service:
+    port: 8080
+
+product-service:
+  image:
+    repository: product-service
+  service:
+    port: 8080
+
+user-service:
+  image:
+    repository: user-service
+  service:
+    port: 8080
 
 ingress:
   enabled: true
-
-
-readinessProbe:
-  path: /actuator/health
-  initialDelay: 30
-  period: 10
-
-livenessProbe:
-  path: /actuator/health
-  initialDelay: 45
-  period: 15
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 200m
-    memory: 256Mi
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  hosts:
+    - host: api-gateway.local
+      paths:
+        - path: /
+          pathType: Prefix
