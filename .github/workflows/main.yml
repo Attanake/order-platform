@@ -58,7 +58,7 @@ jobs:
           for service in "${services[@]}"; do
             echo "Building Docker image for $service..."
             docker build -t $service ./$service
-            k3d image import $service -c ci
+            k3d image import $service:latest -c ci
           done
 
       - name: Deploy with Helm
