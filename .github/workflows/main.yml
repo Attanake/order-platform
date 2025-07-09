@@ -86,8 +86,12 @@ jobs:
             --set global.imagePullPolicy=Always \
             --set api-gateway.readinessProbe.initialDelaySeconds=30 \
             --set api-gateway.livenessProbe.initialDelaySeconds=45
+
+            kubectl logs -n default deployment/api-gateway-deployment-latest
           
           kubectl wait --for=condition=available deployment/api-gateway-deployment --timeout=600s -n default
+
+          kubectl logs -n default deployment/api-gateway-deployment-latest
 
       - name: Verify deployment
         run: |
