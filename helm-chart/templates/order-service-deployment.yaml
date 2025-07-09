@@ -20,13 +20,13 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8085
-        - livenessProbe:
+          livenessProbe:
             httpGet:
               path: {{ .Values.global.probes.liveness.path }}
               port: 8085
             initialDelaySeconds: {{ .Values.global.probes.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.global.probes.liveness.periodSeconds }}
-        - readinessProbe:
+          readinessProbe:
             httpGet:
               path: {{ .Values.global.probes.readiness.path }}
               port: 8085
