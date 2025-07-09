@@ -60,7 +60,7 @@ jobs:
             docker build -t $service ./$service
             k3d image import $service -c ci
           done
-          k3d image list -c ci
+          k3d image list --cluster ci
 
       - name: Deploy with Helm
         run: |
