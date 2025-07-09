@@ -21,12 +21,11 @@ spec:
           ports:
             - containerPort: 8082
         - livenessProbe:
-            httpGet:
+           httpGet:
               path: {{ .Values.global.probes.liveness.path }}
               port: 8082
-            initialDelaySeconds: {{ .Values.global.probes.liveness.initialDelaySeconds }}
-            periodSeconds: {{ .Values.global.probes.liveness.periodSeconds }}
-
+           initialDelaySeconds: {{ .Values.global.probes.liveness.initialDelaySeconds }}
+           periodSeconds: {{ .Values.global.probes.liveness.periodSeconds }}
          - readinessProbe:
             httpGet:
               path: {{ .Values.global.probes.readiness.path }}

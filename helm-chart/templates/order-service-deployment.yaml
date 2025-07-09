@@ -26,7 +26,6 @@ spec:
               port: 8085
             initialDelaySeconds: {{ .Values.global.probes.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.global.probes.liveness.periodSeconds }}
-
         - readinessProbe:
             httpGet:
               path: {{ .Values.global.probes.readiness.path }}
