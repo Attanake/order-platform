@@ -60,6 +60,8 @@ jobs:
             docker build -t $service ./$service
             k3d image import $service:latest -c ci
           done
+          kubectl get nodes
+          kubectl get svc
 
       - name: Deploy with Helm
         run: |
