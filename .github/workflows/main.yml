@@ -57,8 +57,8 @@ jobs:
         run: |
           services=(api-gateway auth-service inventory-service notification-service order-service product-service user-service)
           for service in "${services[@]}"; do
-            echo "Building Docker image for $service..."
-            docker build -t $service ./$service
+            docker build -t k3d-ci-registry:5000/$service:latest ./$service
+            docker push k3d-ci-registry:5000/$service:latest
             k3d image import $service -c ci 
           done
           kubectl get nodes
