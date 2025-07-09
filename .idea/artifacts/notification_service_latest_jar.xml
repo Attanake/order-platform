@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="inventory-service:jar">
-    <output-path>$PROJECT_DIR$/inventory-service/target/inventory_service_jar</output-path>
-    <root id="archive" name="inventory-service.jar">
-      <element id="module-output" name="inventory-service" />
+  <artifact type="jar" build-on-make="true" name="notification-service-latest:jar">
+    <output-path>$PROJECT_DIR$/target/</output-path>
+    <root id="archive" name="notification-service.jar">
+      <element id="module-output" name="notification-service" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-to-slf4j/2.24.3/log4j-to-slf4j-2.24.3.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/2.4/snakeyaml-2.4.jar" path-in-jar="/" />

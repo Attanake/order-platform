@@ -26,4 +26,11 @@ resources:
     cpu: 200m
     memory: 256Mi
 
-
+api-gateway:
+  ingress:
+    enabled: true
+    hosts:
+      - host: api-gateway.local
+        paths:
+          - path: /
+            pathType: Prefix
