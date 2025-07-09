@@ -65,6 +65,7 @@ jobs:
           done
           kubectl get nodes
           kubectl get svc
+          echo "127.0.0.1 api-gateway.local" | sudo tee -a /etc/hosts
 
       - name: Deploy with Helm
         run: |
