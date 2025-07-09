@@ -2,6 +2,7 @@ replicaCount: 1
 
 image:
   tag: latest
+  version: v1
   pullPolicy: IfNotPresent
 
 global:
