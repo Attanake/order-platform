@@ -12,15 +12,19 @@ jobs:
 
       - name: Install tools
         run: |
-          sudo apt-get install -y openjdk-21-jdk
-          export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.8.3 bash
-          k3d --version
           sudo apt-get update
-          sudo apt-get install -y kubectl
+          sudo apt-get install -y kubectl docker.io maven
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.8.3 bash
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
 
       - name: Create cluster
         run: |
@@ -31,78 +35,43 @@ jobs:
           k3d kubeconfig get ci > $HOME/.kube/config
           kubectl cluster-info
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-            java-version: '21'
-            distribution: 'temurin'
-            cache: 'maven'
-            
-      - name: Build and import Docker image
+      - name: Build services
         run: |
-          cd api-gateway
-          mvn clean package -DskipTests
-          cd ..
-          cd auth-service
-          mvn clean package -DskipTests
-          cd ..
-          cd inventory-service
-          mvn clean package -DskipTests
-          cd ..
-          cd notification-service
-          mvn clean package -DskipTests
-          cd ..
-          cd order-service
-          mvn clean package -DskipTests
-          cd ..
-          cd product-service
-          mvn clean package -DskipTests
-          cd ..
-          cd user-service
-          mvn clean package -DskipTests
-          cd ..
-          
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
-          sudo usermod -aG docker $USER
-          docker build -t api-gateway ./api-gateway
-          docker build -t auth-service ./auth-service
-          docker build -t inventory-service ./inventory-service
-          docker build -t notification-service ./notification-service
-          docker build -t order-service ./order-service
-          docker build -t product-service ./product-service
-          docker build -t user-service ./user-service
-          
-          k3d image import -c ci api-gateway
-          k3d image import -c ci auth-service 
-          k3d image import -c ci inventory-service
-          k3d image import -c ci notification-service
-          k3d image import -c ci order-service
-          k3d image import -c ci product-service
-          k3d image import -c ci user-service
-          k3d image list 
+          services=(api-gateway auth-service inventory-service notification-service order-service product-service user-service)
+          for service in "${services[@]}"; do
+            echo "Building $service..."
+            cd $service
+            mvn clean package -DskipTests
+            cd ..
+          done
 
-      - name: Check deployment
+      - name: Build and import Docker images
         run: |
-          kubectl get pods -n default -w &
-          kubectl describe deployment api-gateway-deployment -n default
-          kubectl logs -n default -l app=api-gateway --tail=50
-          kubectl get events -n default --sort-by=.metadata.creationTimestamp
+          services=(api-gateway auth-service inventory-service notification-service order-service product-service user-service)
+          for service in "${services[@]}"; do
+            echo "Building Docker image for $service..."
+            docker build -t $service ./$service
+            k3d image import $service -c ci
+          done
+          k3d image list -c ci
 
       - name: Deploy with Helm
         run: |
           cd helm-chart
-          helm dependency update .
+          helm dependency update
           helm lint .
           helm upgrade --install app . \
             --namespace default \
             --create-namespace \
             --atomic \
             --timeout 30m \
+            --wait \
+            --wait-for-jobs \
             --debug
-          kubectl wait --for=condition=available deployment/app --timeout=300s
+          kubectl wait --for=condition=available deployment/api-gateway-deployment --timeout=600s -n default
 
       - name: Verify deployment
         run: |
-          kubectl get pods,svc -A
-          helm list -A
+          kubectl get pods,svc,deploy -n default -o wide
+          helm status app -n default
+          kubectl logs -n default -l app=api-gateway --tail=100
