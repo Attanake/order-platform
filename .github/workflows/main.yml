@@ -58,9 +58,8 @@ jobs:
           k3d registry create ci-registry --port 5000
           services=(api-gateway auth-service inventory-service notification-service order-service product-service user-service)
           for service in "${services[@]}"; do
-            docker build -t k3d-ci-registry:5000/$service:latest ./$service
-            docker push k3d-ci-registry:5000/$service:latest
-            k3d image import $service:latest -c ci 
+          docker build -t $service ./$service
+          k3d image import $service:latest -c ci 
           done
           kubectl get nodes
           kubectl get svc
