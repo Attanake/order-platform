@@ -7,12 +7,23 @@ image:
 ingress:
   enabled: true
 
+
+readinessProbe:
+  path: /actuator/health
+  initialDelay: 30
+  period: 10
+
+livenessProbe:
+  path: /actuator/health
+  initialDelay: 45
+  period: 15
+
 resources:
   limits:
-    cpu: "200m"
-    memory: "500Mi"
+    cpu: 500m
+    memory: 512Mi
   requests:
-    cpu: "200m"
-    memory: "256Mi"
+    cpu: 200m
+    memory: 256Mi
 
 
