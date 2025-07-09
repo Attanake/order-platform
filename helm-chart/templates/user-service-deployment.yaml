@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: "user-service:latest"
+          image: "user-service:{{.Values.image.version}}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8087

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: "product-service:latest"
+          image: "product-service:{{.Values.image.version}}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8086

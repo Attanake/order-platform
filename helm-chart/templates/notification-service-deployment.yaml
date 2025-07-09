@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: "notification-service:latest"
+          image: "notification-service:{{.Values.image.version}}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8084
