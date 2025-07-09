@@ -63,6 +63,9 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          kubectl get pods -A
+          kubectl describe pods -n default
+          kubectl get events -A --sort-by=.metadata.creationTimestamp
           cd helm-chart
           helm dependency update
           helm lint .
