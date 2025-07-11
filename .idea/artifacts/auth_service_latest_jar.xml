@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="auth-service-latest:jar">
-    <output-path>$PROJECT_DIR$/target/</output-path>
+    <output-path>$PROJECT_DIR$/auth-service/target</output-path>
     <root id="archive" name="auth-service.jar">
       <element id="module-output" name="auth-service" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar" path-in-jar="/" />
