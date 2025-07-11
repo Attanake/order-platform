@@ -18,8 +18,8 @@ jobs:
 
       - name: Run unit tests with coverage
         run: |
-          ./mvnw clean test jacoco:report
-          ./mvnw jacoco:check
+          ./mvn clean test jacoco:report
+          ./mvn jacoco:check
 
       - name: Checkstyle
-        run: ./mvnw checkstyle:check
+        run: ./mvn checkstyle:check
