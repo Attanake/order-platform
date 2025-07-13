@@ -19,9 +19,9 @@ jobs:
       - name: Run unit tests with coverage
         run: |
           chmod +x mvnw
-          ./mvnw clean verify
-          ./mvnw jacoco:check
-          ./mvnw jacoco:report
+          ./mvnw clean verify -e -X
+          ./mvnw jacoco:check -e -X
+          ./mvnw jacoco:report -e -X
 
       - name: Checkstyle
         run: ./mvnw checkstyle:check
