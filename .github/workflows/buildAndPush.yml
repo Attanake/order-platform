@@ -49,3 +49,23 @@ jobs:
             docker tag $SERVICE:$VERSION ${{ secrets.DOCKER_HUB_USERNAME }}/$SERVICE:$VERSION
             docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$SERVICE:$VERSION
           done
+
+           - name: Build and Push Private Images
+             run: |
+          export VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
+          for SERVICE in api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
+            docker buildx build \
+              --push \
+              --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$SERVICE:$VERSION \
+              --file $SERVICE/Dockerfile \
+              $SERVICE
+            
+            curl -X PATCH \
+              -H "Authorization: Bearer $(curl -s -H "Content-Type: application/json" \
+                -X POST \
+                -d '{"username":"'"${{ secrets.DOCKER_HUB_USERNAME }}"'","password":"'"${{ secrets.DOCKER_HUB_TOKEN }}"'"}' \
+                https://hub.docker.com/v2/users/login/ | jq -r .token)" \
+              -H "Content-Type: application/json" \
+              -d '{"is_private":true}' \
+              https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_HUB_USERNAME }}/$SERVICE/
+          done
