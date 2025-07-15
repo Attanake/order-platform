@@ -6,6 +6,7 @@ import arch.attanake.dto.JwtAuthenticationDto;
 import arch.attanake.dto.RefreshTokenDto;
 import arch.attanake.dto.UserCredentialsDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,7 @@ public class AuthController {
             JwtAuthenticationDto jwtAuthenticationDto = userService.singIn(userCredentialsDto);
             return ResponseEntity.ok(jwtAuthenticationDto);
         }catch(AuthenticationException e){
-            throw new RuntimeException("Authentication failed " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 

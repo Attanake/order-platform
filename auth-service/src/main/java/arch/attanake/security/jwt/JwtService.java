@@ -18,7 +18,7 @@ import java.util.Date;
 public class JwtService {
 
     private static final Logger LOGGER = LogManager.getLogger(JwtService.class);
-    @Value("c7e7bf29d4e82084c6b481dce11ebb4d0ef6caa1")
+    @Value("2e69ea54301854398bc8bac545d315ee05444ecbe5d7fc1578aeff90a72619093b3c299523083509d3aea13de40c5e79")
     private String JwtSecret;
 
 
