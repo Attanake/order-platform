@@ -34,7 +34,7 @@ jobs:
             **/target/site/jacoco-aggregate
 
       - name: Checkstyle
-        run: ./mvnw checkstyle:check
+        run: ./mvnw checkstyle:check -Dcheckstyle.violationSeverity=warning
 
       - name: Show test failures
         if: failure()
