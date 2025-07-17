@@ -30,7 +30,7 @@ jobs:
       - name: Build with Maven
         run: |
           ./mvnw clean package -DskipTests
-          for SERVICE in api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
+          for SERVICE in discovery-service api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
             mkdir -p $SERVICE/target/docker
             cp $SERVICE/target/*.jar $SERVICE/target/docker/
           done
