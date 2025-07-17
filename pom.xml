@@ -53,7 +53,6 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <haltOnFailure>false</haltOnFailure>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
@@ -76,6 +75,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
             </plugin>
         </plugins>
     </build>
