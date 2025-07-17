@@ -35,3 +35,9 @@ jobs:
 
       - name: Checkstyle
         run: ./mvnw checkstyle:check
+
+      - name: Show test failures
+        if: failure()
+        run: |
+         cat auth-service/target/surefire-reports/*.txt
+         cat auth-service/target/surefire-reports/*.xml
