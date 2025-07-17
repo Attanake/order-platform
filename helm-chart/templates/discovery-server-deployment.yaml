@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "discovery-service-deployment-{{.Values.image.version}}"
+  labels:
+    app: discovery-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: discovery-service
+  template:
+    metadata:
+      labels:
+        app: discovery-service
+    spec:
+      containers:
+        - name: discovery-service
+          image: "discovery-service:{{.Values.image.version}}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8761
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.global.probes.liveness.path }}
+              port: 8761
+            initialDelaySeconds: {{ .Values.global.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.global.probes.liveness.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.global.probes.readiness.path }}
+              port: 8761
+            initialDelaySeconds: {{ .Values.global.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.global.probes.readiness.periodSeconds }}
