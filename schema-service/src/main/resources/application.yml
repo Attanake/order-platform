@@ -1,2 +1,29 @@
 server:
   port: 8088
+spring:
+  application:
+    name: schema-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/schema-service
+    username: postgres
+    password: ${SCHEMA_DB_PASSWORD}
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  jpa:
+    hibernate:
+      ddl-auto: update
+logging:
+  level:
+    root: info
+    org.springframework.kafka: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true

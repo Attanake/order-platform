@@ -7,13 +7,13 @@ spring:
     url: jdbc:postgresql://localhost:5432/auth
     username: postgres
     password: ${AUTH_DB_PASSWORD}
-    jpa:
-      hibernate:
-        ddl-auto: none
-      open-in-view: false
-      jackson:
-        serialization:
-          fail-on-empty-beans: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    jackson:
+      serialization:
+        fail-on-empty-beans: false
 
 eureka:
   client:

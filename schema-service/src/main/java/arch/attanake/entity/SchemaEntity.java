@@ -1,21 +1,19 @@
 package arch.attanake.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "schemas")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
+@Setter
 public class SchemaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, unique = true)
