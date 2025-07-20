@@ -30,7 +30,7 @@ jobs:
       - name: Build with Maven
         run: |
           ./mvnw clean package -DskipTests
-          for SERVICE in discovery-service api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
+          for SERVICE in schema-service discovery-service api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
             mkdir -p $SERVICE/target/docker
             cp $SERVICE/target/*.jar $SERVICE/target/docker/
           done
@@ -44,7 +44,7 @@ jobs:
       - name: Build and Push Docker images
         run: |
           export VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
-          for SERVICE in discovery-service api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
+          for SERVICE in schema discovery-service api-gateway auth-service inventory-service notification-service order-service product-service user-service; do
             docker build -t $SERVICE:$VERSION -f $SERVICE/Dockerfile $SERVICE
             docker tag $SERVICE:$VERSION ${{ secrets.DOCKER_HUB_USERNAME }}/$SERVICE:$VERSION
             docker push ${{ secrets.DOCKER_HUB_USERNAME }}/$SERVICE:$VERSION
