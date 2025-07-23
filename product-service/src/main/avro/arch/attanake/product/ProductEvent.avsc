@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "ProductEvent",
+  "namespace": "arch.attanake.product.kafka",
+  "fields": [
+    {"name": "productId", "type": "string"},
+    {"name": "name", "type": "string"},
+    {"name": "category", "type": "string"},
+    {"name": "price", "type": "string"},
+    {"name": "stock", "type": "int"},
+    {"name": "eventType", "type": {
+      "type": "enum",
+      "name": "EventType",
+      "symbols": ["CREATED", "UPDATED", "DELETED"]
+    }},
+    {"name": "timestamp", "type": "long"}
+  ]
+}

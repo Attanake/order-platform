@@ -8,10 +8,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class ProductServiceApplication {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure()
-                .directory("./product-service")
                 .filename("secrets.env")
                 .load();
-        System.setProperty("PRODUCT_DB_PASSWORD", dotenv.get("PRODUCT_DB_PASSWORD"));
+        System.setProperty("PRODUCT_DB_PASSWORD", dotenv.get("password"));
         new SpringApplicationBuilder(ProductServiceApplication.class).run(args);
     }
 }

@@ -11,6 +11,11 @@ spring:
       database: Product
       username: attanake
       password: ${PRODUCT_DB_PASSWORD}
+  kafka:
+    properties:
+      schema.registry.url: http://localhost:8081
+      basic.auth.credentials.source: URL
+      value.subject.name.strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
 
 eureka:
   client:
