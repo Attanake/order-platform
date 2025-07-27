@@ -3,6 +3,28 @@ server:
 spring:
   application:
     name: inventory-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/inventory
+    username: postgres
+    password: ${password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: inventory-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://schema-service:8088
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://schema-service:8088
 
 eureka:
   client:
@@ -11,3 +33,7 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
+
+grpc:
+  server:
+    port: 9093

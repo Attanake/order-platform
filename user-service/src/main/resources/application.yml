@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/user
     username: postgres
-    password: 99331133
+    password: ${password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,6 +17,11 @@ spring:
       schema.registry.url: http://schema-registry:8081
       basic.auth.credentials.source: URL
       value.subject.name.strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
+    topics:
+      user-created: user-created-topic
+      user-roles-updated: user-role-update-topic
+    consumer:
+      group-id: user-service-group
 
 eureka:
   client:
