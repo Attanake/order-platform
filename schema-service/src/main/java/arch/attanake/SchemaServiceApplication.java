@@ -8,10 +8,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class SchemaServiceApplication {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure()
-                .directory("./schema-service")
                 .filename("secrets.env")
                 .load();
-        System.setProperty("SCHEMA_DB_PASSWORD", dotenv.get("SCHEMA_DB_PASSWORD"));
+        System.setProperty("SCHEMA_DB_PASSWORD", dotenv.get("password"));
         new SpringApplicationBuilder(SchemaServiceApplication.class).run(args);
     }
 }

@@ -8,10 +8,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class AuthServiceApplication {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure()
-                .directory("./auth-service")
                 .filename("secrets.env")
                 .load();
-        System.setProperty("AUTH_DB_PASSWORD", dotenv.get("AUTH_DB_PASSWORD"));
+        System.setProperty("AUTH_DB_PASSWORD", dotenv.get("password"));
         new SpringApplicationBuilder(AuthServiceApplication.class).run(args);
     }
 }

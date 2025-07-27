@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "arch.attanake.grpc";
+option java_outer_classname = "InventoryProto";
+
+service InventoryService {
+  rpc ReleaseReservations (ReleaseRequest) returns (ReleaseResponse);
+}
+
+message ReleaseRequest {
+  string order_id = 1;
+}
+
+message ReleaseResponse {
+  bool success = 1;
+}
