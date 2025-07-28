@@ -1,5 +1,8 @@
 package arch.attanake.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum OrderStatus {
     NEW(true),
     PROCESSING(false),

@@ -2,6 +2,7 @@ package arch.attanake.service;
 
 import arch.attanake.dto.CreateOrderRequestDto;
 import arch.attanake.dto.OrderDto;
+import arch.attanake.event.InventoryReservedEvent;
 import arch.attanake.exception.InventoryReleaseException;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface OrderService {
     OrderDto getOrder(UUID id);
     List<OrderDto> getUserOrders(UUID userId);
     void cancelOrder(UUID id) throws InventoryReleaseException;
+    void processInventoryReservation(InventoryReservedEvent event);
 }

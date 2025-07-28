@@ -10,11 +10,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Data
 public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

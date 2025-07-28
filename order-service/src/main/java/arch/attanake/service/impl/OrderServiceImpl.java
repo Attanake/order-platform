@@ -5,6 +5,7 @@ import arch.attanake.dto.OrderDto;
 import arch.attanake.entity.OrderEntity;
 import arch.attanake.entity.OrderItemEntity;
 import arch.attanake.entity.OrderStatus;
+import arch.attanake.event.InventoryReservedEvent;
 import arch.attanake.event.OrderCreatedEvent;
 import arch.attanake.event.OrderStatusChangedEvent;
 import arch.attanake.exception.InventoryReleaseException;
@@ -35,6 +36,26 @@ public class OrderServiceImpl implements OrderService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final OrderMapper orderMapper;
     private final InventoryServiceClient inventoryServiceClient;
+
+
+    @Override
+    @Transactional
+    public void processInventoryReservation(InventoryReservedEvent event) {
+        UUID orderId = event.getOrderId();
+
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        if (order.getStatus() != OrderStatus.NEW) {
+            log.warn("Order {} is not in NEW state, current status: {}", orderId, order.getStatus());
+            return;
+        }
+
+        order.setStatus(OrderStatus.PROCESSING);
+        orderRepository.save(order);
+
+        log.info("Order {} status updated to PROCESSING after inventory reservation", orderId);
+    }
 
     @Override
     @Transactional(readOnly = true)

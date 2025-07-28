@@ -12,8 +12,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "order_items")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

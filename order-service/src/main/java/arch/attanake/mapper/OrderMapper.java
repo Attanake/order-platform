@@ -33,9 +33,9 @@ public interface OrderMapper {
     @Mapping(target = "items", source = "items")
     OrderCreatedEvent toOrderCreatedEvent(OrderEntity entity);
 
-    @Mapping(target = "productId", source = "productId")
-    @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "pricePerUnit", source = "pricePerUnit")
+    @Mapping(target = "productId", source = "id")
+    @Mapping(target = "quantity", source = "stock")
+    @Mapping(target = "pricePerUnit", source = "price")
     OrderItemEvent toOrderItemEvent(OrderItemEntity entity);
 
     List<OrderItemEvent> toOrderItemEventList(List<OrderItemEntity> entities);
