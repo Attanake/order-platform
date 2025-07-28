@@ -1,0 +1,41 @@
+{
+  "type": "record",
+  "name": "OrderStatusChangedEvent",
+  "namespace": "arch.attanake.events",
+  "fields": [
+    {
+      "name": "orderId",
+      "type": "string",
+      "doc": "Unique identifier of the order"
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "User who placed the order"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "OrderStatus",
+        "symbols": ["NEW", "RESERVED", "PAID", "SHIPPED", "COMPLETED", "CANCELLED"]
+      },
+      "doc": "New status of the order"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "logicalType": "timestamp-millis",
+      "doc": "When the status was changed"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional context about the event"
+    }
+  ]
+}
