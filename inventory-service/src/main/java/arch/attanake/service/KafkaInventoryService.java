@@ -15,7 +15,6 @@ import arch.attanake.avro.OrderCreated;
 public class KafkaInventoryService {
 
     private final InventoryService inventoryService;
-    private final InventoryRepository inventoryRepository;
 
     @KafkaListener(topics = "order.created", groupId = "inventory-group")
     public void handleOrderCreated(OrderCreated event) {

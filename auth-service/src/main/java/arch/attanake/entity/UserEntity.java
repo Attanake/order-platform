@@ -1,17 +1,14 @@
 package arch.attanake.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
-
+@Data
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
 @RequiredArgsConstructor
 public class UserEntity {
 

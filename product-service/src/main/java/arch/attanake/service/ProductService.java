@@ -1,14 +1,15 @@
 package arch.attanake.service;
 
-import arch.attanake.dto.ProductRequest;
-import arch.attanake.dto.ProductResponse;
+import arch.attanake.dto.ProductRequestDto;
+import arch.attanake.dto.ProductResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.math.BigDecimal;
 
 public interface ProductService {
-    Page<ProductResponse> searchProducts(
+    Page<ProductResponseDto> searchProducts(
             String name,
             String category,
             BigDecimal minPrice,
@@ -16,9 +17,9 @@ public interface ProductService {
             Pageable pageable
     );
 
-    ProductResponse getProductById(String id);
-    ProductResponse createProduct(ProductRequest request);
-    ProductResponse updateProduct(String id, ProductRequest request);
+    ProductResponseDto getProductById(String id);
+    ProductResponseDto createProduct(ProductRequestDto request);
+    ProductResponseDto updateProduct(String id, ProductRequestDto request);
     void deleteProduct(String id);
     void setProductPublished(String id, boolean published);
 }

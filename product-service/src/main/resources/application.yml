@@ -17,6 +17,11 @@ spring:
       basic.auth.credentials.source: URL
       value.subject.name.strategy: io.confluent.kafka.serializers.subject.RecordNameStrategy
 
+logging:
+  level:
+    io.grpc: DEBUG
+    org.springframework.cloud: DEBUG
+
 eureka:
   client:
     service-url:
@@ -24,3 +29,12 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
+    metadata-map:
+      grpc-port: "9090"
+
+grpc:
+  server:
+    port: 9090
+    enable-reflection: true
+    keep-alive-time: 30s
+    keep-alive-timeout: 5s

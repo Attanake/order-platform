@@ -1,4 +1,6 @@
 server:
+  http2:
+    enabled: true
   port: 8081
 
 spring:
@@ -12,12 +14,53 @@ spring:
             locator:
               lower-case-service-id: true
               enabled: true
+          httpclient:
+            pool:
+              max-connections: 200
+              max-idle-time: 30s
+              type: elastic
   main:
     web-application-type: reactive
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+grpc:
+  client:
+    global:
+      enable-keep-alive: true
+      keep-alive-time: 30s
+      keep-alive-timeout: 5s
+      negotiation-type: plaintext
+    order-service:
+      address: discovery:///order-service
+      enable-keep-alive: true
+      keep-alive-without-calls: true
+      negotiation-type: plaintext
+    product-service:
+      address: discovery:///product-service
+      enable-keep-alive: true
+      negotiation-type: plaintext
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: DEBUG
+    io.grpc: TRACE
+
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
   instance:
+    health-check-url-path: /actuator/health
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 40
+    lease-expiration-duration-in-seconds: 30

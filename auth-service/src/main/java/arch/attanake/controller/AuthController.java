@@ -1,7 +1,7 @@
 package arch.attanake.controller;
 
 
-import arch.attanake.Service.UserService;
+import arch.attanake.service.UserService;
 import arch.attanake.dto.JwtAuthenticationDto;
 import arch.attanake.dto.RefreshTokenDto;
 import arch.attanake.dto.UserCredentialsDto;

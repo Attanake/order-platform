@@ -26,6 +26,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
 
+kafka:
+  topics:
+    inventory-reserved: your-topic-name
+
 eureka:
   client:
     service-url:

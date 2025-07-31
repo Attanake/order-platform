@@ -10,7 +10,7 @@ public class ProductServiceApplication {
         Dotenv dotenv = Dotenv.configure()
                 .filename("secrets.env")
                 .load();
-        System.setProperty("PRODUCT_DB_PASSWORD", dotenv.get("password"));
+        System.setProperty("PRODUCT_DB_PASSWORD", dotenv.get("mongoPassword"));
         new SpringApplicationBuilder(ProductServiceApplication.class).run(args);
     }
 }
