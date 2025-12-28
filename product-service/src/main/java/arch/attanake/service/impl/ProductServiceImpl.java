@@ -1,7 +1,7 @@
 package arch.attanake.service.impl;
 
-import arch.attanake.dto.ProductRequest;
-import arch.attanake.dto.ProductResponse;
+import arch.attanake.dto.ProductRequestDto;
+import arch.attanake.dto.ProductResponseDto;
 import arch.attanake.entity.ProductEntity;
 import arch.attanake.exception.ProductNotFoundException;
 import arch.attanake.mapper.ProductMapper;
@@ -11,10 +11,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,9 +28,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final MongoTemplate mongoTemplate;
 
     @Override
-    public Page<ProductResponse> searchProducts(
+    public Page<ProductResponseDto> searchProducts(
             String name, String category, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
 
         return productRepository.searchProducts(name, category, minPrice, maxPrice, pageable)
@@ -33,15 +39,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getProductById(String id) {
-        return productRepository.findById(id)
+    public ProductResponseDto getProductById(String id) {
+        return productRepository.findByCustomId(id)
                 .map(productMapper::toResponse)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
     @Transactional
-    public ProductResponse createProduct(ProductRequest request) {
+    public ProductResponseDto createProduct(ProductRequestDto request) {
         ProductEntity product = productMapper.toEntity(request);
         product.setPublished(false);
         ProductEntity savedProduct = productRepository.save(product);
@@ -51,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse updateProduct(String id, ProductRequest request) {
+    public ProductResponseDto updateProduct(String id, ProductRequestDto request) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 

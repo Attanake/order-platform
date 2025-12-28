@@ -1,7 +1,7 @@
 package arch.attanake.controller;
 
 
-import arch.attanake.Service.UserService;
+import arch.attanake.service.UserService;
 import arch.attanake.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable String id) throws ChangeSetPersister.NotFoundException {
+    public UserDto getUserById(@PathVariable("id") String id) throws ChangeSetPersister.NotFoundException {
         return userService.getUserById(id);
     }
 

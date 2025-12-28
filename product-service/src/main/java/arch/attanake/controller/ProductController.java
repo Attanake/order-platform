@@ -1,7 +1,7 @@
 package arch.attanake.controller;
 
-import arch.attanake.dto.ProductRequest;
-import arch.attanake.dto.ProductResponse;
+import arch.attanake.dto.ProductRequestDto;
+import arch.attanake.dto.ProductResponseDto;
 import arch.attanake.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public Page<ProductResponse> getAllProducts(
+    public Page<ProductResponseDto> getAllProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) BigDecimal minPrice,
@@ -33,21 +33,21 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductResponse getProductById(@PathVariable String id) {
+    public ProductResponseDto getProductById(@PathVariable String id) {
         return productService.getProductById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ProductResponse createProduct(@Valid @RequestBody ProductRequest request) {
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ProductResponseDto createProduct(@Valid @RequestBody ProductRequestDto request) {
         return productService.createProduct(request);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ProductResponse updateProduct(
+    public ProductResponseDto updateProduct(
             @PathVariable String id,
-            @Valid @RequestBody ProductRequest request) {
+            @Valid @RequestBody ProductRequestDto request) {
         return productService.updateProduct(id, request);
     }
 

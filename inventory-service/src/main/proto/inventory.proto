@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "arch.attanake.grpc";
+option java_outer_classname = "InventoryProto";
+
+service InventoryService {
+  rpc ReserveItems (ReservationRequest) returns (ReservationResponse);
+  rpc CheckAvailability (AvailabilityRequest) returns (AvailabilityResponse);
+  rpc ReleaseReservations (ReleaseRequest) returns (ReleaseResponse);
+}
+
+message ReservationRequest {
+  string order_id = 1;
+  map<string, int32> items = 2;
+}
+
+message AvailabilityRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message ReleaseRequest {
+  string order_id = 1;
+}
+
+message ReservationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message AvailabilityResponse {
+  bool available = 1;
+  int32 actual_quantity = 2;
+}
+
+message ReleaseResponse {
+  bool success = 1;
+}

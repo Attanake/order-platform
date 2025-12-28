@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends MongoRepository<ProductEntity, String> {
@@ -19,6 +21,12 @@ public interface ProductRepository extends MongoRepository<ProductEntity, String
     Page<ProductEntity> findByCategory(String category, Pageable pageable);
 
     Page<ProductEntity> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+
+    @Query("{ 'id': ?0 }")
+    Optional<ProductEntity> findByCustomId(String id);
+
+    @Query(value = "{}", fields = "{'id' : 1}")
+    List<ProductEntity> findAllIds();
 
     @Query("{ $and: [ " +
             "  { 'name': { $regex: ?0, $options: 'i' } }, " +

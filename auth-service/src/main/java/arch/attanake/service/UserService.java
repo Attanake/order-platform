@@ -1,4 +1,4 @@
-package arch.attanake.Service;
+package arch.attanake.service;
 
 import arch.attanake.dto.RefreshTokenDto;
 import arch.attanake.dto.UserCredentialsDto;

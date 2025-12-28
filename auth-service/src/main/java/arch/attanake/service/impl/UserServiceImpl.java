@@ -1,5 +1,5 @@
-package arch.attanake.Service.impl;
-import arch.attanake.Service.UserService;
+package arch.attanake.service.impl;
+import arch.attanake.service.UserService;
 import arch.attanake.dto.JwtAuthenticationDto;
 import arch.attanake.dto.RefreshTokenDto;
 import arch.attanake.dto.UserCredentialsDto;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String addUser(UserDto userDto){
         UserEntity user = userMapper.toEntity(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.save(user);
         return "User added";
     }
