@@ -1,14 +1,14 @@
 server:
-  port: 8761
+  port: ${SERVER_PORT:8761}
 
 eureka:
   instance:
-    hostname: localhost
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:localhost}
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761/eureka}
   server:
-    enable-self-preservation: false  # Отключаем защитный режим
-    eviction-interval-timer-in-ms: 5000  # Частота проверки (5 сек)
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: ${SERVER_EVICTION_INTERVAL:3000}

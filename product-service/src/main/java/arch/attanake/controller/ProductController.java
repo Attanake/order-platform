@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/product")
 @RequiredArgsConstructor
 @Validated
 public class ProductController {
@@ -24,10 +24,10 @@ public class ProductController {
 
     @GetMapping
     public Page<ProductResponseDto> getAllProducts(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false, name = "name") String name,
+            @RequestParam(required = false, name = "category") String category,
+            @RequestParam(required = false, name = "minPrice") BigDecimal minPrice,
+            @RequestParam(required = false, name = "maxPrice") BigDecimal maxPrice,
             @PageableDefault Pageable pageable) {
         return productService.searchProducts(name, category, minPrice, maxPrice, pageable);
     }
@@ -38,13 +38,11 @@ public class ProductController {
     }
 
     @PostMapping
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     public ProductResponseDto createProduct(@Valid @RequestBody ProductRequestDto request) {
         return productService.createProduct(request);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ProductResponseDto updateProduct(
             @PathVariable String id,
             @Valid @RequestBody ProductRequestDto request) {
@@ -52,13 +50,11 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
     }
 
     @PatchMapping("/{id}/publish")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void publishProduct(@PathVariable String id, @RequestParam boolean published) {
         productService.setProductPublished(id, published);
     }

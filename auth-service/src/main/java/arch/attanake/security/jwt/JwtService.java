@@ -4,22 +4,34 @@ import arch.attanake.dto.JwtAuthenticationDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtService {
 
     private static final Logger LOGGER = LogManager.getLogger(JwtService.class);
-    @Value("2e69ea54301854398bc8bac545d315ee05444ecbe5d7fc1578aeff90a72619093b3c299523083509d3aea13de40c5e79")
+    private final JwtProperties jwtProperties;
+    @Value("${jwt.secret}")
     private String JwtSecret;
+
+    public JwtService(@Qualifier("jwt-arch.attanake.security.jwt.JwtProperties") JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+        log.info("ACCESS TOKEN TTL = {}", jwtProperties.getAccessTokenTtl());
+        log.info("REFRESH TOKEN TTL = {}", jwtProperties.getRefreshTokenTtl());
+    }
 
 
     public JwtAuthenticationDto generateAuthToken(String username) {
@@ -68,25 +80,22 @@ public class JwtService {
     }
 
     private String generateJwtToken(String username) {
-        Date date = Date.from(LocalDateTime.now().plusMinutes(30).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .subject(username)
-                .expiration(date)
+                .expiration(Date.from(Instant.now().plus(jwtProperties.getAccessTokenTtl())))
                 .signWith(getSignInKey())
                 .compact();
     }
 
     private String generateRefreshToken(String username) {
-        Date date = Date.from(LocalDateTime.now().plusDays(2).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .subject(username)
-                .expiration(date)
+                .expiration(Date.from(Instant.now().plus(jwtProperties.getRefreshTokenTtl())))
                 .signWith(getSignInKey())
                 .compact();
     }
 
     private SecretKey getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(JwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(JwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 }

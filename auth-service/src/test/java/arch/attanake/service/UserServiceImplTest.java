@@ -76,7 +76,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void singIn_ShouldReturnTokens_WhenCredentialsValid() throws Exception {
+    void signIn_ShouldReturnTokens_WhenCredentialsValid() throws Exception {
         UserCredentialsDto credentials = new UserCredentialsDto();
         credentials.setUsername("testUser");
         credentials.setPassword("correctPass");
@@ -93,7 +93,7 @@ class UserServiceImplTest {
         when(passwordEncoder.matches("correctPass", "encodedPass")).thenReturn(true);
         when(jwtService.generateAuthToken("testUser")).thenReturn(tokens);
 
-        JwtAuthenticationDto result = userService.singIn(credentials);
+        JwtAuthenticationDto result = userService.signIn(credentials);
 
         assertEquals("accessToken", result.getToken());
         assertEquals("refreshToken", result.getRefreshToken());
@@ -122,7 +122,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void singIn_ShouldThrow_WhenCredentialsInvalid() {
+    void signIn_ShouldThrow_WhenCredentialsInvalid() {
         UserCredentialsDto credentials = new UserCredentialsDto();
         credentials.setUsername("testUser");
         credentials.setPassword("wrongPass");
@@ -135,7 +135,7 @@ class UserServiceImplTest {
         when(passwordEncoder.matches("wrongPass", "encodedPass")).thenReturn(false);
 
         assertThrows(AuthenticationException.class, () -> {
-            userService.singIn(credentials);
+            userService.signIn(credentials);
         });
     }
 

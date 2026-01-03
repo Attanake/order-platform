@@ -1,13 +1,13 @@
 server:
-  port: 8087
+  port: ${SERVER_PORT:8087}
 
 spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/user
-    username: postgres
-    password: ${password}
+    url: jdbc:postgresql://localhost:5432/${USER_DB_NAME:postgres}
+    username: ${USER_DB_USER:postgres}
+    password: ${USER_DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -34,12 +34,6 @@ eureka:
 logging:
   level:
     root: INFO
-    arch.attanake: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 management:
   endpoints:
@@ -50,3 +44,9 @@ management:
     health:
       show-details: always
 
+springdoc:
+  api-docs:
+    path: /user/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

@@ -3,16 +3,12 @@ package arch.attanake.config;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.config.GrpcChannelsProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
-import org.springframework.cloud.gateway.discovery.DiscoveryClientRouteDefinitionLocator;
-import org.springframework.cloud.gateway.discovery.DiscoveryLocatorProperties;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.time.Duration;
 
 @Configuration
@@ -37,13 +33,12 @@ public class GatewayConfig {
                                         .setFallbackUri("forward:/auth-fallback")))
                         .uri("lb://auth-service"))
 
-                .route("user-service", r -> r.path("/api/users/**")
+                .route("user-service", r -> r.path("/api/user/**")
                         .filters(f -> f
-                                .stripPrefix(1)
-                                .addRequestHeader("X-User-Id", "#{@jwtExtractor.getUserId()}"))
+                                .stripPrefix(1))
                         .uri("lb://user-service"))
 
-                .route("order-service", r -> r.path("/api/orders/**")
+                .route("order-service", r -> r.path("/api/order/**")
                         .filters(f -> f
                                 .stripPrefix(1)
                                 .retry(retryConfig -> retryConfig
@@ -54,35 +49,32 @@ public class GatewayConfig {
                                         .setFallbackUri("forward:/order-fallback")))
                                 .uri("lb://order-service"))
 
-                .route("inventory-service", r -> r.path("/api/internal/inventory/**")
-                        .filters(f -> f.stripPrefix(2))
+                .route("inventory-service", r -> r.path("/api/inventory/**")
+                        .filters(f -> f.stripPrefix(1))
                         .uri("lb://inventory-service"))
-                .route("grpc-product-service", r -> r.path("/grpc/product/**")
-                        .filters(f -> f
-                                .rewritePath("/grpc/product/(?<segment>.*)", "/${segment}")
-                                .setRequestHeader("content-type", "application/grpc+proto")
-                                .setResponseHeader("content-type", "application/grpc+proto"))
-                        .metadata("preserve-host-header", "true")
-                        .metadata("connect-timeout", "5000")
-                        .metadata("idle-timeout", "60000")
-                        .uri("lb://product-service?enableHttp2=true"))
+
+                .route("product-service", r -> r
+                        .path("/api/product/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://product-service")
+                )
+
+                .route("notification-service", r -> r
+                        .path("/api/notification/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://notification-service")
+                )
+
+                .route("schema-service", r -> r
+                        .path("/api/schema/**")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri("lb://schema-service")
+                )
                 .build();
     }
 
     @Bean
     public GrpcChannelsProperties grpcChannelsProperties() {
         return new GrpcChannelsProperties();
-    }
-
-
-    @Bean
-    public DiscoveryClientRouteDefinitionLocator discoveryRouteLocator(
-            ReactiveDiscoveryClient discoveryClient,
-            org.springframework.cloud.gateway.filter.factory.SpringCloudCircuitBreakerFilterFactory circuitBreakerFactory) {
-
-        return new DiscoveryClientRouteDefinitionLocator(
-                discoveryClient,
-                new DiscoveryLocatorProperties()
-        );
     }
 }

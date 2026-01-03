@@ -6,6 +6,7 @@ import arch.attanake.entity.ProductEntity;
 import arch.attanake.exception.ProductNotFoundException;
 import arch.attanake.mapper.ProductMapper;
 import arch.attanake.repository.ProductRepository;
+import arch.attanake.repository.ProductRepositoryService;
 import arch.attanake.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +28,14 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductRepositoryService productRepositoryService;
     private final ProductMapper productMapper;
-    private final MongoTemplate mongoTemplate;
 
     @Override
     public Page<ProductResponseDto> searchProducts(
             String name, String category, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
 
-        return productRepository.searchProducts(name, category, minPrice, maxPrice, pageable)
+        return productRepositoryService.search(name, category, minPrice, maxPrice, pageable)
                 .map(productMapper::toResponse);
     }
 

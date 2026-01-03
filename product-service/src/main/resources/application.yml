@@ -1,5 +1,5 @@
 server:
-  port: 8086
+  port: ${SERVER_PORT:8089}
 spring:
   application:
     name: product-service
@@ -8,9 +8,10 @@ spring:
       auto-index-creation: true
       host: localhost
       port: 27017
-      database: Product
-      username: attanake
-      password: ${PRODUCT_DB_PASSWORD}
+      database: ${PRODUCT_MONGO_DB_NAME:Product}
+      username: ${PRODUCT_MONGO_DB_USER:root}
+      password: ${PRODUCT_MONGO_DB_PASSWORD:root}
+      authentication-database: admin
   kafka:
     properties:
       schema.registry.url: http://localhost:8088
@@ -22,6 +23,7 @@ logging:
     io.grpc: DEBUG
     org.springframework.cloud: DEBUG
 
+
 eureka:
   client:
     service-url:
@@ -30,11 +32,18 @@ eureka:
     instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
     metadata-map:
-      grpc-port: "9090"
+      grpc-port: ${GRPC_SERVER_PORT:9099}
 
 grpc:
   server:
-    port: 9090
+    port: ${GRPC_SERVER_PORT:9099}
     enable-reflection: true
     keep-alive-time: 30s
     keep-alive-timeout: 5s
+
+springdoc:
+  api-docs:
+    path: /product/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: product/swagger-ui.html

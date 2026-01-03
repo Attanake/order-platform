@@ -1,12 +1,12 @@
 server:
-  port: 8088
+  port: ${SERVER_PORT:8088}
 spring:
   application:
     name: schema-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/schema-service
-    username: postgres
-    password: ${SCHEMA_DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/${SCHEMA_DB_NAME:schema}
+    username: ${SCHEMA_DB_USER:postgres}
+    password: ${SCHEMA_DB_PASSWORD:postgres}
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -27,3 +27,10 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
+
+springdoc:
+  api-docs:
+    path: /schema/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: schema/swagger-ui.html

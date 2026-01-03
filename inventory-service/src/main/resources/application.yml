@@ -1,12 +1,12 @@
 server:
-  port: 8083
+  port: ${SERVER_PORT:8083}
 spring:
   application:
     name: inventory-service
   datasource:
     url: jdbc:postgresql://localhost:5432/inventory
     username: postgres
-    password: ${password}
+    password: ${INVENTORY_DB_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: update
@@ -36,4 +36,11 @@ eureka:
 
 grpc:
   server:
-    port: 9093
+    port: ${GRPC_SERVER_PORT:9093}
+
+springdoc:
+  api-docs:
+    path: inventory/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

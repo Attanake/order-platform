@@ -5,6 +5,7 @@ import arch.attanake.service.UserService;
 import arch.attanake.dto.JwtAuthenticationDto;
 import arch.attanake.dto.RefreshTokenDto;
 import arch.attanake.dto.UserCredentialsDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,11 @@ import javax.naming.AuthenticationException;
 public class AuthController {
     private final UserService userService;
 
-    @PostMapping("/sing-in")
-    public ResponseEntity<JwtAuthenticationDto> singIn(@RequestBody UserCredentialsDto userCredentialsDto) {
+    @PostMapping("/sign-in")
+    public ResponseEntity<JwtAuthenticationDto> signIn(@Valid @RequestBody UserCredentialsDto userCredentialsDto) {
 
         try{
-            JwtAuthenticationDto jwtAuthenticationDto = userService.singIn(userCredentialsDto);
+            JwtAuthenticationDto jwtAuthenticationDto = userService.signIn(userCredentialsDto);
             return ResponseEntity.ok(jwtAuthenticationDto);
         }catch(AuthenticationException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -32,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public JwtAuthenticationDto refresh(@RequestBody RefreshTokenDto refreshTokenDto) throws Exception {
+    public JwtAuthenticationDto refresh(@Valid @RequestBody RefreshTokenDto refreshTokenDto) throws Exception {
         return userService.refreshToken(refreshTokenDto);
     }
 }

@@ -1,16 +1,14 @@
 package arch.attanake;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import arch.attanake.security.jwt.JwtProperties;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties({JwtProperties.class})
 public class AuthServiceApplication {
     public static void main(String[] args) {
-        Dotenv dotenv = Dotenv.configure()
-                .filename("secrets.env")
-                .load();
-        System.setProperty("AUTH_DB_PASSWORD", dotenv.get("password"));
         new SpringApplicationBuilder(AuthServiceApplication.class).run(args);
     }
 }

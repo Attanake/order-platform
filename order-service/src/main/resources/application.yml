@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: ${SERVER_PORT:8085}
 
 spring:
   application:
@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/order
     username: postgres
-    password: ${password}
+    password: ${ORDER_DB_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,7 +28,7 @@ spring:
 
 kafka:
   topics:
-    inventory-reserved: your-topic-name
+    inventory-reserved: inventory-reserved-topic
 
 eureka:
   client:
@@ -37,3 +37,10 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
+
+springdoc:
+  api-docs:
+    path: /order/v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

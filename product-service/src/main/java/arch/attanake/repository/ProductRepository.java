@@ -2,13 +2,16 @@ package arch.attanake.repository;
 
 import arch.attanake.entity.ProductEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,17 +30,4 @@ public interface ProductRepository extends MongoRepository<ProductEntity, String
 
     @Query(value = "{}", fields = "{'id' : 1}")
     List<ProductEntity> findAllIds();
-
-    @Query("{ $and: [ " +
-            "  { 'name': { $regex: ?0, $options: 'i' } }, " +
-            "  { 'category': ?1 }, " +
-            "  { 'price': { $gte: ?2, $lte: ?3 } } " +
-            "] }")
-    Page<ProductEntity> searchProducts(
-            @Param("name") String name,
-            @Param("category") String category,
-            @Param("minPrice") BigDecimal minPrice,
-            @Param("maxPrice") BigDecimal maxPrice,
-            Pageable pageable
-    );
 }
